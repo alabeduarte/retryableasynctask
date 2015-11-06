@@ -11,7 +11,7 @@ Android AsyncTask that retries the job in case of failure.
 
 ```java
 // Params, Progress and Result could be anything, same as a regular AsyncTask
-RetryableAsyncTask<Params, Progress, Result> asyncTask = new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
+new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
   @Override
   protected void onPreExecute() {
     // write some code here
@@ -29,9 +29,7 @@ RetryableAsyncTask<Params, Progress, Result> asyncTask = new RetryableAsyncTask<
   protected void onPostExecute(Result result) {
     // write some code here with your result
   }
-}
-
-asyncTask.execute(myParams);
+}.execute(myParams);
 ```
 
 ## Contributing
