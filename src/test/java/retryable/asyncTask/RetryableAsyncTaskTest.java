@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +36,7 @@ import static org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog;
 @Config(constants = BuildConfig.class)
 public class RetryableAsyncTaskTest {
 
-  RetryableAsyncTask retryableAsyncTask;
+  RetryableAsyncTask<String, Void, String> retryableAsyncTask;
   Activity activity;
 
   @Mock AsyncTaskStep onPreExecuteMock;
@@ -49,7 +48,7 @@ public class RetryableAsyncTaskTest {
     initMocks(this);
 
     activity = buildActivity(Activity.class).create().get();
-    retryableAsyncTask = new RetryableAsyncTask<Object, Void, String>(activity) {
+    retryableAsyncTask = new RetryableAsyncTask<String, Void, String>(activity) {
 
       @Override
       protected void onPreExecute() {
@@ -57,7 +56,7 @@ public class RetryableAsyncTaskTest {
       }
 
       @Override
-      protected String doInBackground(Object... params) {
+      protected String doInBackground(String... params) {
         doInBackgroundMock.call(params);
 
         return "bar";
@@ -95,7 +94,7 @@ public class RetryableAsyncTaskTest {
 
     flushBackgroundThreadScheduler();
 
-    assertThat(retryableAsyncTask.get(), CoreMatchers.<Object>is("bar"));
+    assertThat(retryableAsyncTask.get(), is("bar"));
     assertThat(getLatestAlertDialog().isShowing(), is(false));
   }
 
@@ -132,7 +131,7 @@ public class RetryableAsyncTaskTest {
 
     flushBackgroundThreadScheduler();
 
-    assertThat(retryableAsyncTask.get(), CoreMatchers.<Object>is("bar"));
+    assertThat(retryableAsyncTask.get(), is("bar"));
   }
 
   @Test
