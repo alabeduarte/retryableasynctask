@@ -9,6 +9,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNetworkInfo;
@@ -24,8 +25,8 @@ import static java.lang.String.valueOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.flushBackgroundThreadScheduler;
 import static org.robolectric.RuntimeEnvironment.application;
@@ -39,12 +40,14 @@ public class RetryableAsyncTaskTest {
   RetryableAsyncTask retryableAsyncTask;
   Activity activity;
 
-  AsyncTaskStep onPreExecuteMock = mock(AsyncTaskStep.class);
-  AsyncTaskStep doInBackgroundMock = mock(AsyncTaskStep.class);
-  AsyncTaskStep onPostExecuteMock = mock(AsyncTaskStep.class);
+  @Mock AsyncTaskStep onPreExecuteMock;
+  @Mock AsyncTaskStep doInBackgroundMock;
+  @Mock AsyncTaskStep onPostExecuteMock;
 
   @Before
   public void setUp() {
+    initMocks(this);
+
     activity = buildActivity(Activity.class).create().get();
     retryableAsyncTask = new RetryableAsyncTask<Object, Void, String>(activity) {
 
