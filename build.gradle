@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'org.robolectric'
 
 buildscript {
@@ -7,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
-
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
         classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
     }
 }
@@ -22,6 +23,16 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'retryableasynctask'
+        name = 'retryableasynctask'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/alabeduarte/retryableasynctask.git'
+    }
+}
 
 android {
     compileSdkVersion 21
