@@ -5,8 +5,6 @@ Status](https://snap-ci.com/alabeduarte/retryableasynctask/branch/master/build_i
 
 Android AsyncTask that retries the job in case of failure.
 
-## Pre-requisites:
-
 ## Usage
 
 ```java
@@ -30,6 +28,30 @@ new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
     // write some code here with your result
   }
 }.execute(myParams);
+```
+
+## Install
+
+```groovy
+buildscript {
+  repositories {
+    // ...
+    maven { url "https://jitpack.io" }
+  }
+}
+
+// ...
+
+allprojects {
+  repositories {
+    // ...
+    maven { url "https://jitpack.io" }
+  }
+}
+```
+
+```groovy
+compile 'com.github.alabeduarte:retryableasynctask:0.0.0'
 ```
 
 ## Contributing
