@@ -16,6 +16,7 @@ import org.robolectric.shadows.ShadowNetworkInfo;
 import java.util.concurrent.ExecutionException;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
+import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.net.NetworkInfo.DetailedState.CONNECTED;
@@ -24,6 +25,7 @@ import static java.lang.String.valueOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.robolectric.Robolectric.buildActivity;
@@ -74,17 +76,17 @@ public class RetryableAsyncTaskTest {
     disconnectToWifiNetwork();
     retryableAsyncTask.execute();
 
-    assertThatAlertDialogIsShown();
+    assertThatAlertNoInternetDialogIsShown();
   }
 
   @Test
-  public void itRetriesAsyncTaskExecutionOnButtonTouch() throws ExecutionException, InterruptedException {
+  public void itRetriesAsyncTaskExecutionOnRetryButtonTouch() throws ExecutionException, InterruptedException {
     disconnectToWifiNetwork();
     retryableAsyncTask.execute();
 
     flushBackgroundThreadScheduler();
 
-    assertThatAlertDialogIsShown();
+    assertThatAlertNoInternetDialogIsShown();
     assertNull(retryableAsyncTask.get());
 
     connectToWifiNetwork();
@@ -104,7 +106,7 @@ public class RetryableAsyncTaskTest {
 
     retryableAsyncTask.execute();
 
-    assertThatAlertDialogIsShown();
+    assertThatAlertNoInternetDialogIsShown();
   }
 
   @Test
@@ -155,15 +157,38 @@ public class RetryableAsyncTaskTest {
     verify(onPostExecuteMock).call("bar");
   }
 
+  @Test
+  public void itShowsDialogOnDoingBackgroundFailure() {
+    doThrow(new RuntimeException()).when(doInBackgroundMock).call("foo");
+
+    retryableAsyncTask.execute("foo");
+
+    assertThatAlertGenericErrorDialogIsShown(application.getString(R.string.something_went_wrong));
+  }
+
+  @Test
+  public void itDismissesAlertDialogOnCancelButtonTouch() throws ExecutionException, InterruptedException {
+    doThrow(new RuntimeException()).when(doInBackgroundMock).call("foo");
+
+    retryableAsyncTask.execute("foo");
+
+    assertThat(getLatestAlertDialog().isShowing(), is(true));
+
+    AlertDialog alert = getLatestAlertDialog();
+    alert.getButton(BUTTON_NEGATIVE).performClick();
+
+    assertThat(getLatestAlertDialog().isShowing(), is(false));
+  }
+
   private void connectToWifiNetwork() {
-    setWitiNetworkConnectivity(CONNECTED, true);
+    setWiFiNetworkConnectivity(CONNECTED, true);
   }
 
   private void disconnectToWifiNetwork() {
-    setWitiNetworkConnectivity(DISCONNECTED, false);
+    setWiFiNetworkConnectivity(DISCONNECTED, false);
   }
 
-  private void setWitiNetworkConnectivity(NetworkInfo.DetailedState status, boolean isConnected) {
+  private void setWiFiNetworkConnectivity(NetworkInfo.DetailedState status, boolean isConnected) {
     ConnectivityManager connectivityManager = getConnectivityManager();
     int subType = 0;
     boolean isAvailable = true;
@@ -179,13 +204,20 @@ public class RetryableAsyncTaskTest {
     return (ConnectivityManager) application.getSystemService(CONNECTIVITY_SERVICE);
   }
 
-  private void assertThatAlertDialogIsShown() {
-    AlertDialog alert = getLatestAlertDialog();
-    String noInternetConnection = valueOf(shadowOf(alert).getMessage());
-    String retry = valueOf(alert.getButton(BUTTON_POSITIVE).getText());
+  private void assertThatAlertNoInternetDialogIsShown() {
+    assertThatAlertGenericErrorDialogIsShown(application.getString(R.string.no_internet_connection));
+  }
 
-    assertThat(noInternetConnection, is(application.getString(R.string.no_internet_connection)));
-    assertThat(retry, is(application.getString(R.string.retry)));
+  private void assertThatAlertGenericErrorDialogIsShown(String message) {
+    AlertDialog alert = getLatestAlertDialog();
+    String alertMessage = valueOf(shadowOf(alert).getMessage());
+    String buttonPositiveText = valueOf(alert.getButton(BUTTON_POSITIVE).getText());
+    String buttonNegativeText = valueOf(alert.getButton(BUTTON_NEGATIVE).getText());
+
+    assertThat(alertMessage, is(message));
+    assertThat(buttonPositiveText, is(application.getString(R.string.retry)));
+    assertThat(buttonNegativeText, is(application.getString(R.string.cancel)));
+    assertThat(getLatestAlertDialog().isShowing(), is(true));
   }
 
   private class AsyncTaskStep {

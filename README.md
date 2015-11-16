@@ -32,26 +32,34 @@ new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
 
 ## Install
 
+### Gradle
+
 ```groovy
-buildscript {
-  repositories {
-    // ...
-    maven { url "https://jitpack.io" }
-  }
-}
-
-// ...
-
-allprojects {
-  repositories {
-    // ...
-    maven { url "https://jitpack.io" }
-  }
+repositories {
+  // ...
+  maven { url "https://jitpack.io" }
 }
 ```
 
 ```groovy
-compile 'com.github.alabeduarte:retryableasynctask:0.0.0'
+compile 'com.github.alabeduarte:retryableasynctask:0.0.1'
+```
+
+### Maven
+
+```xml
+<repository>
+  <id>jitpack.io</id>
+  <url>https://jitpack.io</url>
+</repository>
+```
+
+```xml
+<dependency>
+  <groupId>com.github.alabeduarte</groupId>
+  <artifactId>retryableasynctask</artifactId>
+  <version>0.0.1</version>
+</dependency>
 ```
 
 ## Contributing

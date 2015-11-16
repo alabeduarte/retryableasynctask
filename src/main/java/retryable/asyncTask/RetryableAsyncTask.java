@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +30,15 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
       task = new NullableAsyncTask();
     }
 
-    return task.execute(params);
+    try {
+      return task.execute(params);
+    } catch(Throwable ex) {
+      Log.e(getClass().getCanonicalName(), ex.getMessage(), ex);
+
+      showDialog(context.getResources().getString(R.string.something_went_wrong));
+    }
+
+    return null;
   }
 
   public final Result get() throws InterruptedException, ExecutionException {
@@ -51,8 +60,15 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
             dialog.dismiss();
           }
         })
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        })
         .create();
 
+    dialog.setCanceledOnTouchOutside(false);
     dialog.show();
   }
 }
