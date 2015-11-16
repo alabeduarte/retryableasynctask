@@ -3,27 +3,30 @@ package retryable.asyncTask;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
 import java.util.concurrent.ExecutionException;
 
+import retryable.asyncTask.checkers.ConnectivityChecker;
+
 public abstract class RetryableAsyncTask<Params, Progress, Result> {
   private final Context context;
+  private final ConnectivityChecker connectivityChecker;
+
   private AsyncTask task;
 
   public RetryableAsyncTask(Context context) {
     this.context = context;
+    connectivityChecker = new ConnectivityChecker(context);
   }
 
   public final AsyncTask<Params, Progress, Result> execute(final Params... params) {
-    if (isNotConnected()) {
+    if (connectivityChecker.isConnected()) {
+      task = new ConcreteAsyncTask(this);
+    } else {
       showDialog(context.getResources().getString(R.string.no_internet_connection), params);
 
       task = new NullableAsyncTask();
-    } else {
-      task = new ConcreteAsyncTask(this);
     }
 
     return task.execute(params);
@@ -51,22 +54,5 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
         .create();
 
     dialog.show();
-  }
-
-  private boolean isNotConnected() {
-    return !isConnected();
-  }
-
-  private boolean isConnected() {
-    return getActiveNetworkInfo() != null &&
-        getActiveNetworkInfo().isConnectedOrConnecting();
-  }
-
-  private NetworkInfo getActiveNetworkInfo() {
-    return getConnectivityManager().getActiveNetworkInfo();
-  }
-
-  private ConnectivityManager getConnectivityManager() {
-    return (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
   }
 }
