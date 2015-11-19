@@ -1,9 +1,6 @@
 package retryable.asyncTask;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,28 +8,24 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowNetworkInfo;
 
 import java.util.concurrent.ExecutionException;
 
-import static android.content.Context.CONNECTIVITY_SERVICE;
-import static android.content.DialogInterface.BUTTON_NEGATIVE;
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-import static android.net.ConnectivityManager.TYPE_WIFI;
-import static android.net.NetworkInfo.DetailedState.CONNECTED;
-import static android.net.NetworkInfo.DetailedState.DISCONNECTED;
-import static java.lang.String.valueOf;
+import retryable.asyncTask.checkers.ConnectivityChecker;
+import retryable.asyncTask.dialogs.RetryableDialog;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.flushBackgroundThreadScheduler;
 import static org.robolectric.RuntimeEnvironment.application;
-import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -40,6 +33,9 @@ public class RetryableAsyncTaskTest {
 
   RetryableAsyncTask<String, Void, String> retryableAsyncTask;
   Activity activity;
+
+  @Mock ConnectivityChecker connectivityCheckerMock;
+  @Mock RetryableDialog retryableDialogMock;
 
   @Mock AsyncTaskStep onPreExecuteMock;
   @Mock AsyncTaskStep doInBackgroundMock;
@@ -49,8 +45,10 @@ public class RetryableAsyncTaskTest {
   public void setUp() {
     initMocks(this);
 
+    when(connectivityCheckerMock.isConnected()).thenReturn(true);
+
     activity = buildActivity(Activity.class).create().get();
-    retryableAsyncTask = new RetryableAsyncTask<String, Void, String>(activity) {
+    retryableAsyncTask = new RetryableAsyncTask<String, Void, String>(activity, connectivityCheckerMock, retryableDialogMock) {
 
       @Override
       protected void onPreExecute() {
@@ -72,59 +70,10 @@ public class RetryableAsyncTaskTest {
   }
 
   @Test
-  public void itShowsDialogWhenThereIsNoConnectivity() {
-    disconnectToWifiNetwork();
-    retryableAsyncTask.execute();
-
-    assertThatAlertNoInternetDialogIsShown();
-  }
-
-  @Test
-  public void itRetriesAsyncTaskExecutionOnRetryButtonTouch() throws ExecutionException, InterruptedException {
-    disconnectToWifiNetwork();
-    retryableAsyncTask.execute();
-
-    flushBackgroundThreadScheduler();
-
-    assertThatAlertNoInternetDialogIsShown();
-    assertNull(retryableAsyncTask.get());
-
-    connectToWifiNetwork();
-
-    AlertDialog alert = getLatestAlertDialog();
-    alert.getButton(BUTTON_POSITIVE).performClick();
-
-    flushBackgroundThreadScheduler();
+  public void itRetriesAsyncTaskExecution() throws ExecutionException, InterruptedException {
+    retryableAsyncTask.retry();
 
     assertThat(retryableAsyncTask.get(), is("bar"));
-    assertThat(getLatestAlertDialog().isShowing(), is(false));
-  }
-
-  @Test
-  public void itShowsDialogWhenActiveNetworkIsNull() {
-    shadowOf(getConnectivityManager()).setActiveNetworkInfo(null);
-
-    retryableAsyncTask.execute();
-
-    assertThatAlertNoInternetDialogIsShown();
-  }
-
-  @Test
-  public void itDoesNotShowDialogWhenThereIsConnectivity() {
-    connectToWifiNetwork();
-    retryableAsyncTask.execute();
-
-    assertNull(getLatestAlertDialog());
-  }
-
-  @Test
-  public void itDoesNotExecutAsyncTaskIfThereIsNoConnectivity() throws ExecutionException, InterruptedException {
-    disconnectToWifiNetwork();
-    retryableAsyncTask.execute();
-
-    flushBackgroundThreadScheduler();
-
-    assertNull(retryableAsyncTask.get());
   }
 
   @Test
@@ -158,66 +107,41 @@ public class RetryableAsyncTaskTest {
   }
 
   @Test
+  public void itShowsDialogWhenThereIsNoConnectivity() {
+    when(connectivityCheckerMock.isConnected()).thenReturn(false);
+
+    retryableAsyncTask.execute();
+
+    verify(retryableDialogMock).show(application.getString(R.string.no_internet_connection));
+  }
+
+  @Test
+  public void itDoesNotExecutAsyncTaskIfThereIsNoConnectivity() throws ExecutionException, InterruptedException {
+    when(connectivityCheckerMock.isConnected()).thenReturn(false);
+
+    retryableAsyncTask.execute();
+
+    flushBackgroundThreadScheduler();
+
+    assertNull(retryableAsyncTask.get());
+  }
+
+  @Test
+  public void itDoesNotShowDialogWhenThereIsConnectivity() {
+    when(connectivityCheckerMock.isConnected()).thenReturn(true);
+
+    retryableAsyncTask.execute();
+
+    verify(retryableDialogMock, never()).show(application.getString(R.string.no_internet_connection));
+  }
+
+  @Test
   public void itShowsDialogOnDoingBackgroundFailure() {
     doThrow(new RuntimeException()).when(doInBackgroundMock).call("foo");
 
     retryableAsyncTask.execute("foo");
 
-    assertThatAlertGenericErrorDialogIsShown(application.getString(R.string.something_went_wrong));
-  }
-
-  @Test
-  public void itDismissesAlertDialogOnCancelButtonTouch() throws ExecutionException, InterruptedException {
-    doThrow(new RuntimeException()).when(doInBackgroundMock).call("foo");
-
-    retryableAsyncTask.execute("foo");
-
-    assertThat(getLatestAlertDialog().isShowing(), is(true));
-
-    AlertDialog alert = getLatestAlertDialog();
-    alert.getButton(BUTTON_NEGATIVE).performClick();
-
-    assertThat(getLatestAlertDialog().isShowing(), is(false));
-  }
-
-  private void connectToWifiNetwork() {
-    setWiFiNetworkConnectivity(CONNECTED, true);
-  }
-
-  private void disconnectToWifiNetwork() {
-    setWiFiNetworkConnectivity(DISCONNECTED, false);
-  }
-
-  private void setWiFiNetworkConnectivity(NetworkInfo.DetailedState status, boolean isConnected) {
-    ConnectivityManager connectivityManager = getConnectivityManager();
-    int subType = 0;
-    boolean isAvailable = true;
-
-    NetworkInfo networkInfo = ShadowNetworkInfo.newInstance(
-        status, TYPE_WIFI, subType, isAvailable, isConnected
-    );
-
-    shadowOf(connectivityManager).setActiveNetworkInfo(networkInfo);
-  }
-
-  private ConnectivityManager getConnectivityManager() {
-    return (ConnectivityManager) application.getSystemService(CONNECTIVITY_SERVICE);
-  }
-
-  private void assertThatAlertNoInternetDialogIsShown() {
-    assertThatAlertGenericErrorDialogIsShown(application.getString(R.string.no_internet_connection));
-  }
-
-  private void assertThatAlertGenericErrorDialogIsShown(String message) {
-    AlertDialog alert = getLatestAlertDialog();
-    String alertMessage = valueOf(shadowOf(alert).getMessage());
-    String buttonPositiveText = valueOf(alert.getButton(BUTTON_POSITIVE).getText());
-    String buttonNegativeText = valueOf(alert.getButton(BUTTON_NEGATIVE).getText());
-
-    assertThat(alertMessage, is(message));
-    assertThat(buttonPositiveText, is(application.getString(R.string.retry)));
-    assertThat(buttonNegativeText, is(application.getString(R.string.cancel)));
-    assertThat(getLatestAlertDialog().isShowing(), is(true));
+    verify(retryableDialogMock).show(application.getString(R.string.something_went_wrong), "foo");
   }
 
   private class AsyncTaskStep {
