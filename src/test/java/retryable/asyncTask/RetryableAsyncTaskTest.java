@@ -17,8 +17,6 @@ import retryable.asyncTask.dialogs.RetryableDialog;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -136,12 +134,14 @@ public class RetryableAsyncTaskTest {
   }
 
   @Test
-  public void itShowsDialogOnDoingBackgroundFailure() {
-    doThrow(new RuntimeException()).when(doInBackgroundMock).call("foo");
+  public void itShowsDialogOnError() {
+    String params = "foo";
 
-    retryableAsyncTask.execute("foo");
+    retryableAsyncTask.execute(params);
 
-    verify(retryableDialogMock).show(application.getString(R.string.something_went_wrong), "foo");
+    retryableAsyncTask.onError(new RuntimeException(), params);
+
+    verify(retryableDialogMock).show(application.getString(R.string.something_went_wrong), params);
   }
 
   private class AsyncTaskStep {

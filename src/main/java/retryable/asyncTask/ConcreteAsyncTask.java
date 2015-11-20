@@ -2,7 +2,10 @@ package retryable.asyncTask;
 
 import android.os.AsyncTask;
 
-class ConcreteAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+import static retryable.asyncTask.AsyncTaskResult.failure;
+import static retryable.asyncTask.AsyncTaskResult.success;
+
+class ConcreteAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, AsyncTaskResult<Result, Throwable>> {
   private RetryableAsyncTask parentTask;
 
   public ConcreteAsyncTask(RetryableAsyncTask parentTask) {
@@ -15,12 +18,20 @@ class ConcreteAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Prog
   }
 
   @Override
-  protected Result doInBackground(final Params... params) {
-    return (Result) parentTask.doInBackground(params);
+  protected AsyncTaskResult<Result, Throwable> doInBackground(final Params... params) {
+    try {
+      return success((Result) parentTask.doInBackground(params));
+    } catch(Throwable ex) {
+      return failure(ex, params);
+    }
   }
 
   @Override
-  protected void onPostExecute(Result result) {
-    parentTask.onPostExecute(result);
+  protected void onPostExecute(AsyncTaskResult<Result, Throwable> result) {
+    if (result.isFailure()) {
+      parentTask.onError(result.failureValue(), "foo");
+    } else {
+      parentTask.onPostExecute(result.successValue());
+    }
   }
 }

@@ -40,23 +40,23 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
       task = new NullableAsyncTask();
     }
 
-    try {
-      return task.execute(params);
-    } catch(Throwable ex) {
-      Log.e(getClass().getCanonicalName(), ex.getMessage(), ex);
-
-      retryableDialog.show(context.getResources().getString(R.string.something_went_wrong), params);
-    }
-
-    return null;
+    return task.execute(params);
   }
 
   public final AsyncTask<Params, Progress, Result> retry(Params... params) {
     return this.execute(params);
   }
 
+  public void onError(Throwable error, final Params... params) {
+    Log.e(getClass().getCanonicalName(), error.getMessage(), error);
+
+    retryableDialog.show(context.getResources().getString(R.string.something_went_wrong), params);
+  }
+
   public final Result get() throws InterruptedException, ExecutionException {
-    return (Result) task.get();
+    if (task.get() == null) { return null; }
+
+    return (Result) ((AsyncTaskResult) task.get()).successValue();
   }
 
   public Context getContext() {
