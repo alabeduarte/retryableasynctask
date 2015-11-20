@@ -27,6 +27,11 @@ new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
   protected void onPostExecute(Result result) {
     // write some code here with your result
   }
+  
+  @Override
+  protected void onError(Throwable error, final Params... params) {
+    // write your own error handling
+  }
 }.execute(myParams);
 ```
 
@@ -42,7 +47,7 @@ repositories {
 ```
 
 ```groovy
-compile 'com.github.alabeduarte:retryableasynctask:0.0.2'
+compile 'com.github.alabeduarte:retryableasynctask:0.0.3'
 ```
 
 ### Maven
@@ -58,7 +63,7 @@ compile 'com.github.alabeduarte:retryableasynctask:0.0.2'
 <dependency>
   <groupId>com.github.alabeduarte</groupId>
   <artifactId>retryableasynctask</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 </dependency>
 ```
 

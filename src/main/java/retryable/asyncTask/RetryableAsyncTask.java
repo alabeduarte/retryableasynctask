@@ -47,12 +47,6 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
     return this.execute(params);
   }
 
-  public void onError(Throwable error, final Params... params) {
-    Log.e(getClass().getCanonicalName(), error.getMessage(), error);
-
-    retryableDialog.show(context.getResources().getString(R.string.something_went_wrong), params);
-  }
-
   public final Result get() throws InterruptedException, ExecutionException {
     if (task.get() == null) { return null; }
 
@@ -68,4 +62,10 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
   protected abstract Result doInBackground(final Params... params);
 
   protected void onPostExecute(final Result result) {}
+
+  protected void onError(Throwable error, final Params... params) {
+    Log.e(getClass().getCanonicalName(), error.getMessage(), error);
+
+    retryableDialog.show(context.getResources().getString(R.string.something_went_wrong), params);
+  }
 }
