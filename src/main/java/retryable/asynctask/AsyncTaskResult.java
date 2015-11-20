@@ -1,4 +1,4 @@
-package retryable.asyncTask;
+package retryable.asynctask;
 
 public class AsyncTaskResult<SuccessT, FailureT> {
   private final SuccessT success;

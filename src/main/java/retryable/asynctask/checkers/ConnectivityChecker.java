@@ -1,4 +1,4 @@
-package retryable.asyncTask.checkers;
+package retryable.asynctask.checkers;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

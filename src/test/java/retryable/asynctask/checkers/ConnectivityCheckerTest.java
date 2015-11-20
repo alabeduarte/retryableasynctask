@@ -1,4 +1,4 @@
-package retryable.asyncTask.checkers;
+package retryable.asynctask.checkers;
 
 import android.app.Activity;
 import android.net.ConnectivityManager;
@@ -11,7 +11,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNetworkInfo;
 
-import retryable.asyncTask.BuildConfig;
+import retryable.asynctask.BuildConfig;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.net.ConnectivityManager.TYPE_WIFI;

@@ -1,4 +1,4 @@
-package retryable.asyncTask;
+package retryable.asynctask;
 
 import android.app.Activity;
 
@@ -11,8 +11,8 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.ExecutionException;
 
-import retryable.asyncTask.checkers.ConnectivityChecker;
-import retryable.asyncTask.dialogs.RetryableDialog;
+import retryable.asynctask.checkers.ConnectivityChecker;
+import retryable.asynctask.dialogs.RetryableDialog;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

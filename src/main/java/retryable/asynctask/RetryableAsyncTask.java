@@ -1,16 +1,13 @@
-package retryable.asyncTask;
+package retryable.asynctask;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.concurrent.ExecutionException;
 
-import retryable.asyncTask.checkers.ConnectivityChecker;
-import retryable.asyncTask.dialogs.RetryableDialog;
+import retryable.asynctask.checkers.ConnectivityChecker;
+import retryable.asynctask.dialogs.RetryableDialog;
 
 public abstract class RetryableAsyncTask<Params, Progress, Result> {
   private final Context context;

@@ -1,4 +1,4 @@
-package retryable.asyncTask.dialogs;
+package retryable.asynctask.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,9 +9,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-import retryable.asyncTask.BuildConfig;
-import retryable.asyncTask.R;
-import retryable.asyncTask.RetryableAsyncTask;
+import retryable.asynctask.BuildConfig;
+import retryable.asynctask.R;
+import retryable.asynctask.RetryableAsyncTask;
 
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_POSITIVE;

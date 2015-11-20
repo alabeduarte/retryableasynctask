@@ -1,4 +1,4 @@
-package retryable.asyncTask;
+package retryable.asynctask;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +11,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.robolectric.Robolectric.flushBackgroundThreadScheduler;
-import static org.robolectric.RuntimeEnvironment.application;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)

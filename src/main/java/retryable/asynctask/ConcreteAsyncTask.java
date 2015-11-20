@@ -1,9 +1,9 @@
-package retryable.asyncTask;
+package retryable.asynctask;
 
 import android.os.AsyncTask;
 
-import static retryable.asyncTask.AsyncTaskResult.failure;
-import static retryable.asyncTask.AsyncTaskResult.success;
+import static retryable.asynctask.AsyncTaskResult.failure;
+import static retryable.asynctask.AsyncTaskResult.success;
 
 class ConcreteAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, AsyncTaskResult<Result, Throwable>> {
   private RetryableAsyncTask parentTask;

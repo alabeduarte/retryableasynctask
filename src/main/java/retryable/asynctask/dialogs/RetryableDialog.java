@@ -1,10 +1,10 @@
-package retryable.asyncTask.dialogs;
+package retryable.asynctask.dialogs;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-import retryable.asyncTask.R;
-import retryable.asyncTask.RetryableAsyncTask;
+import retryable.asynctask.R;
+import retryable.asynctask.RetryableAsyncTask;
 
 public class RetryableDialog {
   private final RetryableAsyncTask retryableAsyncTask;
