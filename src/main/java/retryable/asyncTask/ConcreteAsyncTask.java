@@ -29,7 +29,7 @@ class ConcreteAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Prog
   @Override
   protected void onPostExecute(AsyncTaskResult<Result, Throwable> result) {
     if (result.isFailure()) {
-      parentTask.onError(result.failureValue(), "foo");
+      parentTask.onError(result.failureValue(), result.getParams());
     } else {
       parentTask.onPostExecute(result.successValue());
     }
