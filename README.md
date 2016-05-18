@@ -47,7 +47,7 @@ repositories {
 ```
 
 ```groovy
-compile 'com.github.alabeduarte:retryableasynctask:0.0.3'
+compile 'com.github.alabeduarte:retryableasynctask:0.0.4'
 ```
 
 ### Maven

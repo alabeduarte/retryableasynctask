@@ -15,8 +15,8 @@ import retryable.asynctask.checkers.ConnectivityChecker;
 import retryable.asynctask.dialogs.RetryableDialog;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

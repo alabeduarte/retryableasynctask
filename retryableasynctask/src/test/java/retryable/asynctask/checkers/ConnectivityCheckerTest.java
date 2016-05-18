@@ -18,7 +18,7 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.net.NetworkInfo.DetailedState.CONNECTED;
 import static android.net.NetworkInfo.DetailedState.DISCONNECTED;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.RuntimeEnvironment.application;
 import static org.robolectric.Shadows.shadowOf;

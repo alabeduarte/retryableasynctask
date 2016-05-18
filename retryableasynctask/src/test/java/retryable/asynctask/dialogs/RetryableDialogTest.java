@@ -10,7 +10,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import retryable.asynctask.BuildConfig;
-import retryable.asynctask.R;
 import retryable.asynctask.RetryableAsyncTask;
 
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
@@ -69,7 +68,7 @@ public class RetryableDialogTest {
     AlertDialog alert = getLatestAlertDialog();
     String buttonPositiveText = valueOf(alert.getButton(BUTTON_POSITIVE).getText());
 
-    assertThat(buttonPositiveText, is(application.getString(R.string.retry)));
+    assertThat(buttonPositiveText, is(application.getString(retryable.asynctask.R.string.retry)));
   }
 
   @Test
@@ -79,7 +78,7 @@ public class RetryableDialogTest {
     AlertDialog alert = getLatestAlertDialog();
     String buttonNegativeText = valueOf(alert.getButton(BUTTON_NEGATIVE).getText());
 
-    assertThat(buttonNegativeText, is(application.getString(R.string.cancel)));
+    assertThat(buttonNegativeText, is(application.getString(retryable.asynctask.R.string.cancel)));
   }
 
   @Test
