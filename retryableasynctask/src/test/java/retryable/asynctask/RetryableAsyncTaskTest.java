@@ -55,7 +55,7 @@ public class RetryableAsyncTaskTest {
 
       @Override
       protected String doInBackground(String... params) {
-        doInBackgroundMock.call(params);
+        doInBackgroundMock.call((Object[]) params);
 
         return "bar";
       }
