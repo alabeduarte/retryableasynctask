@@ -66,7 +66,7 @@ public class ConnectivityCheckerTest {
     setWitiNetworkConnectivity(DISCONNECTED, false);
   }
 
-  private void setWitiNetworkConnectivity(NetworkInfo.DetailedState status, boolean isConnected) {
+  private void setWifiNetworkConnectivity(NetworkInfo.DetailedState status, boolean isConnected) {
     ConnectivityManager connectivityManager = getConnectivityManager();
     int subType = 0;
     boolean isAvailable = true;
