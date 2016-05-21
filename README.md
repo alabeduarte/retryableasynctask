@@ -27,7 +27,7 @@ new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
   protected void onPostExecute(Result result) {
     // write some code here with your result
   }
-  
+
   @Override
   protected void onError(Throwable error, final Params... params) {
     // write your own error handling
@@ -63,7 +63,7 @@ compile 'com.github.alabeduarte:retryableasynctask:0.0.4'
 <dependency>
   <groupId>com.github.alabeduarte</groupId>
   <artifactId>retryableasynctask</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
 </dependency>
 ```
 
