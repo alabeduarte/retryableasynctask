@@ -59,11 +59,11 @@ public class ConnectivityCheckerTest {
   }
 
   private void connectToWifiNetwork() {
-    setWitiNetworkConnectivity(CONNECTED, true);
+    setWifiNetworkConnectivity(CONNECTED, true);
   }
 
   private void disconnectToWifiNetwork() {
-    setWitiNetworkConnectivity(DISCONNECTED, false);
+    setWifiNetworkConnectivity(DISCONNECTED, false);
   }
 
   private void setWifiNetworkConnectivity(NetworkInfo.DetailedState status, boolean isConnected) {
