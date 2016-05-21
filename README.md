@@ -35,6 +35,8 @@ new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
 }.execute(myParams);
 ```
 
+By the default, `onError` method shows a dialog "Cancel" and "Retry" button options.
+
 ## Install
 
 ### Gradle

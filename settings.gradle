@@ -1,1 +1,1 @@
-include ':app', ':retryableasynctask'
+include ':example', ':retryableasynctask'
