@@ -30,6 +30,8 @@ new RetryableAsyncTask<Params, Progress, Result>(myActivity) {
 }.execute(myParams);
 ```
 
+### Overriding "onError" behaviour
+
 By the default, `onError` method shows a dialog "Cancel" and "Retry" button options.
 However, you might wanna do something else when something goes wrong. To do so,
 override `onError` with your own error handling.
