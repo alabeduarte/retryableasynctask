@@ -61,7 +61,7 @@ repositories {
 ```
 
 ```groovy
-compile 'com.github.alabeduarte:retryableasynctask:0.0.4'
+compile 'com.github.alabeduarte:retryableasynctask:0.0.5'
 ```
 
 ### Maven
@@ -77,7 +77,7 @@ compile 'com.github.alabeduarte:retryableasynctask:0.0.4'
 <dependency>
   <groupId>com.github.alabeduarte</groupId>
   <artifactId>retryableasynctask</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
 </dependency>
 ```
 
@@ -101,3 +101,6 @@ smooth integration, but follow the command below if you wanna run all unit tests
 $ ./gradlew test
 ```
 
+## License
+
+retryableasynctask is released under the [MIT License](http://www.opensource.org/licenses/MIT).
