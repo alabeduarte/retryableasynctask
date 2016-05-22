@@ -2,6 +2,7 @@
 
 [![Build
 Status](https://snap-ci.com/alabeduarte/retryableasynctask/branch/master/build_image)](https://snap-ci.com/alabeduarte/retryableasynctask/branch/master)
+[![Release](https://jitpack.io/v/alabeduarte/retryableasynctask.svg)](https://jitpack.io/#alabeduarte/retryableasynctask)
 
 Retryable async task for Android. It retries a executed job in case of failure.
 
