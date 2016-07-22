@@ -1,21 +1,21 @@
 package retryable.asynctask;
 
-public class AsyncTaskResult<SuccessT, FailureT> {
+public class AsyncTaskResult<FailureT, SuccessT> {
   private final SuccessT success;
   private final FailureT failure;
   private final Object[] params;
 
-  public static <SuccessT, FailureT> AsyncTaskResult<SuccessT, FailureT> success(SuccessT success) {
-    return new AsyncTaskResult<>(success, null);
+  public static <FailureT, SuccessT> AsyncTaskResult<FailureT, SuccessT> success(SuccessT success) {
+    return new AsyncTaskResult<>(null, success);
   }
 
-  public static <SuccessT, FailureT> AsyncTaskResult<SuccessT, FailureT> failure(FailureT failure, Object... params) {
-    return new AsyncTaskResult<>(null, failure, params);
+  public static <FailureT, SuccessT> AsyncTaskResult<FailureT, SuccessT> failure(FailureT failure, Object... params) {
+    return new AsyncTaskResult<>(failure, null, params);
   }
 
-  private AsyncTaskResult(SuccessT success, FailureT failure, Object... params) {
-    this.success = success;
+  private AsyncTaskResult(FailureT failure, SuccessT success, Object... params) {
     this.failure = failure;
+    this.success = success;
     this.params = params;
   }
 

@@ -105,6 +105,17 @@ public class RetryableAsyncTaskTest {
   }
 
   @Test
+  public void itCancelsAsyncTaskExecution() {
+    retryableAsyncTask.execute("foo");
+
+    assertThat(retryableAsyncTask.isCancelled(), is(false));
+
+    retryableAsyncTask.cancel();
+
+    assertThat(retryableAsyncTask.isCancelled(), is(true));
+  }
+
+  @Test
   public void itShowsDialogWhenThereIsNoConnectivity() {
     when(connectivityCheckerMock.isConnected()).thenReturn(false);
 

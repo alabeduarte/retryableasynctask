@@ -53,6 +53,24 @@ public class ConcreteAsyncTaskTest {
   }
 
   @Test
+  public void itDelegatesToParentTaskOnCancelled() {
+    when(retryableAsyncTask.doInBackground("foo")).thenReturn("bar");
+
+    concreteAsyncTask.onCancelled(null);
+
+    verify(retryableAsyncTask).onCancelled(null);
+  }
+
+  @Test
+  public void itDelegatesToParentTaskOnCancelledWithNoArguments() {
+    when(retryableAsyncTask.doInBackground("foo")).thenReturn("bar");
+
+    concreteAsyncTask.onCancelled();
+
+    verify(retryableAsyncTask).onCancelled();
+  }
+
+  @Test
   public void itShowsDialogOnDoingBackgroundFailure() {
     RuntimeException error = new RuntimeException();
 

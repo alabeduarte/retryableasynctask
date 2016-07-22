@@ -35,12 +35,13 @@ public class RetryableDialogTest {
   RetryableDialog retryableDialog;
 
   RetryableAsyncTask spiedRetryableAsyncTask;
+  Activity activity;
 
   @Before
   public void setUp() {
     initMocks(this);
 
-    Activity activity = buildActivity(Activity.class).create().get();
+    activity = buildActivity(Activity.class).create().get();
     spiedRetryableAsyncTask = spy(new RetryableAsyncTask<String, Void, String>(activity) {
       @Override
       protected String doInBackground(String... params) {
@@ -82,12 +83,21 @@ public class RetryableDialogTest {
   }
 
   @Test
-  public void itDelegatesToRetryableAsyncTaskToTryAgain() {
+  public void itDelegatesToRetryableAsyncTaskToTryAgainOnButtonPositiveClick() {
     retryableDialog.show(ALERT_MESSAGE, ASYNC_TASK_PARAMS);
 
     getLatestAlertDialog().getButton(BUTTON_POSITIVE).performClick();
 
     verify(spiedRetryableAsyncTask).retry(ASYNC_TASK_PARAMS);
+  }
+
+  @Test
+  public void itDelegatesToRetryableAsyncTaskCancelItOnButtonNegativeClick() {
+    retryableDialog.show(ALERT_MESSAGE, ASYNC_TASK_PARAMS);
+
+    getLatestAlertDialog().getButton(BUTTON_NEGATIVE).performClick();
+
+    verify(spiedRetryableAsyncTask).cancel();
   }
 
 }

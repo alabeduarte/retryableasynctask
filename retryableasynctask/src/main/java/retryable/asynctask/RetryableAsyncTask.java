@@ -15,6 +15,7 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
   private final RetryableDialog retryableDialog;
 
   private AsyncTask task;
+  private boolean cancelled;
 
   public RetryableAsyncTask(Context context) {
     this.context = context;
@@ -38,6 +39,19 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
     }
 
     return task.execute(params);
+  }
+
+  public boolean cancel() {
+    if (task != null) {
+      task.cancel(true);
+      cancelled = true;
+    }
+
+    return cancelled;
+  }
+
+  public boolean isCancelled() {
+    return cancelled;
   }
 
   public final AsyncTask<Params, Progress, Result> retry(Params... params) {
@@ -65,4 +79,8 @@ public abstract class RetryableAsyncTask<Params, Progress, Result> {
 
     retryableDialog.show(context.getResources().getString(R.string.something_went_wrong), params);
   }
+
+  protected void onCancelled(Result result) {}
+
+  protected void onCancelled() {}
 }
